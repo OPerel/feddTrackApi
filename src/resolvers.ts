@@ -1,4 +1,4 @@
-import { dateScalar } from './schema';
+import { prisma } from './db';
 
 const meals = [
   {
@@ -31,42 +31,40 @@ const meals = [
   },
 ];
 
-const feels = [
-  {
-    felt_at: new Date(1682276314859),
-    score: 6,
-  },
-  {
-    felt_at: new Date(1682376314859),
-    score: 9,
-  },
-  {
-    felt_at: new Date(1682476314859),
-    score: 4,
-  },
-  {
-    felt_at: new Date(1682576314859),
-    score: 7,
-  },
-  {
-    felt_at: new Date(1682676314859),
-    score: 6,
-  },
-  {
-    felt_at: new Date(1682876314859),
-    score: 9,
-  },
-  {
-    felt_at: new Date(1683056414859),
-    score: 8,
-  },
-];
+interface CreateFeelArgs {
+  score: number;
+  createdAt: Date;
+}
 
 const resolvers = {
-  Date: dateScalar,
   Query: {
     meals: () => meals,
-    feels: () => feels,
+    feels: async (parent, args) => {
+      const { gt, lt } = args;
+      try {
+        return await prisma.feel.findMany({
+          where: {
+            AND: [{ createdAt: { gt } }, { createdAt: { lt } }],
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+  },
+  Mutation: {
+    createFeel: async (parent: any, args: CreateFeelArgs) => {
+      try {
+        return await prisma.feel.create({
+          data: {
+            score: args.score,
+            createdAt: args.createdAt,
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
 };
 
