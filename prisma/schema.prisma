@@ -16,3 +16,9 @@ model Feel {
 	createdAt DateTime @map("created_at")
 	score Int
 }
+
+model Meal {
+	id String @id @default(auto()) @map("_id") @db.ObjectId
+	createdAt DateTime @map("created_at")
+	ingredients String[]
+}

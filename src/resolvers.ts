@@ -1,44 +1,30 @@
 import { prisma } from './db';
 
-const meals = [
-  {
-    eaten_at: new Date(1682276314859),
-    ingredients: ['Rice', 'Tofu'],
-  },
-  {
-    eaten_at: new Date(1682376314859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-  {
-    eaten_at: new Date(1682476314859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-  {
-    eaten_at: new Date(1682576314859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-  {
-    eaten_at: new Date(1682676314859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-  {
-    eaten_at: new Date(1682876314859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-  {
-    eaten_at: new Date(1683056414859),
-    ingredients: ['Apple', 'Avocado'],
-  },
-];
-
 interface CreateFeelArgs {
   score: number;
   createdAt: Date;
 }
 
+interface CreateMealArgs {
+  ingredients: string[];
+  createdAt: Date;
+}
+
 const resolvers = {
   Query: {
-    meals: () => meals,
+    meals: async (parent, args) => {
+      const { gt, lt } = args;
+      try {
+        return await prisma.meal.findMany({
+          where: {
+            AND: [{ createdAt: { gt } }, { createdAt: { lt } }],
+          },
+        });
+      } catch (e) {
+        console.log(e);
+        throw new Error(e);
+      }
+    },
     feels: async (parent, args) => {
       const { gt, lt } = args;
       try {
@@ -49,6 +35,7 @@ const resolvers = {
         });
       } catch (e) {
         console.log(e);
+        throw new Error(e);
       }
     },
   },
@@ -63,6 +50,20 @@ const resolvers = {
         });
       } catch (e) {
         console.log(e);
+        throw new Error(e);
+      }
+    },
+    createMeal: async (parent: any, args: CreateMealArgs) => {
+      try {
+        return await prisma.meal.create({
+          data: {
+            ingredients: args.ingredients,
+            createdAt: args.createdAt,
+          },
+        });
+      } catch (e) {
+        console.log(e);
+        throw new Error(e);
       }
     },
   },

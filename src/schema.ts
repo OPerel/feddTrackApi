@@ -2,6 +2,7 @@ const typeDefs = `#graphql
 scalar DateTime
 
 type Meal {
+  id: String!
   createdAt: DateTime!,
   ingredients: [String]!
 }
@@ -14,12 +15,13 @@ type Feel {
 }
 
 type Query {
-  meals: [Meal]
+  meals(gt: DateTime!, lt: DateTime!): [Meal]
   feels(gt: DateTime!, lt: DateTime!): [Feel]
 }
 
 type Mutation {
   createFeel(score: Int, createdAt: DateTime): Feel
+  createMeal(ingredients: [String], createdAt: DateTime): Meal
 }
 `;
 
