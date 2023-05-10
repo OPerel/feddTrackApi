@@ -66,6 +66,19 @@ const resolvers = {
         throw new Error(e);
       }
     },
+    deleteMeal: async (parent: any, args: { id: string }) => {
+      try {
+        const { id } = await prisma.meal.delete({
+          where: {
+            id: args.id,
+          },
+        });
+        return id;
+      } catch (e) {
+        console.log(e);
+        throw new Error(e);
+      }
+    },
   },
 };
 
