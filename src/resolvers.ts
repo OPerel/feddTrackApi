@@ -32,6 +32,11 @@ const resolvers = {
           where: {
             AND: [{ createdAt: { gt } }, { createdAt: { lt } }],
           },
+          orderBy: [
+            {
+              createdAt: 'desc',
+            },
+          ],
         });
       } catch (e) {
         console.log(e);
