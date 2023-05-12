@@ -43,6 +43,16 @@ const resolvers = {
         throw new Error(e);
       }
     },
+    totalItems: async () => {
+      try {
+        const totalMeals = await prisma.meal.count();
+        const totalFeels = await prisma.feel.count();
+        return { totalMeals, totalFeels };
+      } catch (e) {
+        console.log(e);
+        throw new Error(e);
+      }
+    },
   },
   Mutation: {
     createFeel: async (parent: any, args: CreateFeelArgs) => {
@@ -74,6 +84,19 @@ const resolvers = {
     deleteMeal: async (parent: any, args: { id: string }) => {
       try {
         const { id } = await prisma.meal.delete({
+          where: {
+            id: args.id,
+          },
+        });
+        return id;
+      } catch (e) {
+        console.log(e);
+        throw new Error(e);
+      }
+    },
+    deleteFeel: async (parent: any, args: { id: string }) => {
+      try {
+        const { id } = await prisma.feel.delete({
           where: {
             id: args.id,
           },
